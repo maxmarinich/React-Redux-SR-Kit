@@ -5,7 +5,8 @@ const watchify = require('watchify');
 const babelify = require('babelify');
 const notify = require('gulp-notify');
 const rename = require('gulp-rename');
-const eslint  = require('gulp-eslint');
+const uglifyify = require('uglifyify');
+const eslintify  = require('eslintify');
 const browserify = require('browserify');
 const imagemin = require('gulp-imagemin');
 const source = require('vinyl-source-stream');
@@ -35,13 +36,14 @@ const VARS = {
       };
 
       const bundler = options.watch ? watchify(browserify(props)) : browserify(props);
+      bundler.transform(eslintify);
       bundler.transform(babelify, {
         presets: ['es2015', 'react'],
         plugins: ['transform-object-rest-spread', 'transform-runtime']
       });
+      bundler.transform({global: true}, uglifyify);
 
       function rebundle() {
-        lintify();
         return bundler.bundle()
           .on('error', onJsBundleError)
           .pipe(source('index.js'))
@@ -107,12 +109,6 @@ function onJsBundleError() {
   }).apply(this, args);
 
   this.emit('end'); // Keep gulp from hanging on this task
-}
-
-function lintify() {
-  return gulp.src(VARS.js.src)
-    .pipe(eslint())
-    .pipe(eslint.format())
 }
 
 module.exports = VARS;
