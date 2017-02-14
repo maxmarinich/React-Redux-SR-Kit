@@ -1,0 +1,7 @@
+@import url(//cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400&subset=cyrillic);
+* {
+  color: #333;
+  transition: 300ms; }
+
+/*# sourceMappingURL=style.css.map */
