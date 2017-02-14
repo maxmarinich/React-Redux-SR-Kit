@@ -1,37 +1,30 @@
 const gulp = require('gulp');
-const gutil = require('gulp-util');
-const notify = require('gulp-notify');
 const sass = require('gulp-sass');
-const rename = require('gulp-rename');
-const browserify = require('browserify');
+const gutil = require('gulp-util');
 const watchify = require('watchify');
 const babelify = require('babelify');
-const livereload = require('gulp-livereload');
+const notify = require('gulp-notify');
+const rename = require('gulp-rename');
+const eslint  = require('gulp-eslint');
+const browserify = require('browserify');
+const imagemin = require('gulp-imagemin');
 const source = require('vinyl-source-stream');
+const autoprefixer = require('gulp-autoprefixer');
 
-gulp.task('default', ['build']);
 
 const VARS = {
   css: {
-    src: 'src/styles/**/*.sass',
-    entry: 'src/styles/style.sass',
-    dest: './static/'
+    src: 'assets/styles/**/*.sass',
+    entry: 'assets/styles/style.sass',
+    dest: './static'
   },
   img: {
-    src: 'src/i/**/*',
+    src: 'assets/i/**/*',
     dest: './static/i'
   },
-  press: {
-    src: './press.json',
-    dest: './dist/'
-  },
-  rivus: {
-    src: './rivus.json',
-    dest: './dist/'
-  },
   js: {
-    src: 'src/js/**/*.js',
-    entry: 'src/js/index.js',
+    src: 'assets/js/**/*.js',
+    entry: 'assets/js/index.js',
     dest: './static/',
     bundle: function(options) {
       const props = {
@@ -48,6 +41,7 @@ const VARS = {
       });
 
       function rebundle() {
+        lintify();
         return bundler.bundle()
           .on('error', onJsBundleError)
           .pipe(source('index.js'))
@@ -64,27 +58,20 @@ const VARS = {
   }
 };
 
-gulp.task('settings', ['press', 'rivus']);
+gulp.task('default', ['build', 'watch']);
 
-gulp.task('build', ['js', 'css', 'img', 'settings']);
+gulp.task('build', ['js', 'css', 'img']);
+
+gulp.task('watch', [ 'watch:js', 'watch:css', 'watch:img' ]);
 
 gulp.task('img', function() {
   return gulp.src(VARS.img.src)
+    .pipe(imagemin())
     .pipe(gulp.dest(VARS.img.dest))
 });
 
-gulp.task('press', function() {
-  return gulp.src(VARS.press.src)
-    .pipe(gulp.dest(VARS.press.dest));
-});
-
-gulp.task('rivus', function() {
-  return gulp.src(VARS.rivus.src)
-    .pipe(gulp.dest(VARS.rivus.dest));
-});
-
 gulp.task('js', function() {
-  return VARS.js.bundle({ sourceMaps: process.env.NODE_ENV !== 'production' })
+  return VARS.js.bundle({ sourceMaps: process.env.NODE_ENV !== 'production' });
 });
 
 gulp.task('css', function() {
@@ -93,9 +80,9 @@ gulp.task('css', function() {
       compiler: require('node-sass'),
       outputStyle: 'compressed'
     }).on('error', sass.logError))
+    .pipe(autoprefixer())
     .pipe(rename('style.css'))
-    .pipe(gulp.dest(VARS.css.dest))
-    .pipe(livereload());
+    .pipe(gulp.dest('./static'))
 });
 
 gulp.task('watch:css', ['css'], function() {
@@ -110,25 +97,22 @@ gulp.task('watch:img', ['img'], function() {
   gulp.watch(VARS.img.src, ['img']);
 });
 
-gulp.task('watch', [
-  'watch:js',
-  'watch:css',
-  'watch:img'
-]);
-
 function onJsBundleError() {
   const args = Array.prototype.slice.call(arguments);
 
-  if (typeof args[0] === 'string') {
-    args[0] = new Error(args[0]);
-  }
-
+  if (typeof args[0] === 'string') { args[0] = new Error(args[0]) }
   notify.onError({
-    title: 'Jared Wray Web: Compile Error',
+    title: 'Compile Error',
     message: '<%= error.message %>'
   }).apply(this, args);
 
   this.emit('end'); // Keep gulp from hanging on this task
+}
+
+function lintify() {
+  return gulp.src(VARS.js.src)
+    .pipe(eslint())
+    .pipe(eslint.format())
 }
 
 module.exports = VARS;
