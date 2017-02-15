@@ -1,0 +1,15 @@
+doctype html
+html
+    head
+        title React Kit
+        meta(charset="utf-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width initial-scale=1")
+        link(rel="shortcut icon", href="/i/favicon.ico", type="image/x-icon")
+        link(type="text/css", rel="stylesheet", href="//cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css")
+        link(rel="stylesheet", type="text/css", href="/style.css")
+    body
+        #root= html || 'root'
+        script.
+          window.__PRELOADED_STATE__ = !{JSON.stringify(state)}
+        script(src="/index.js")
