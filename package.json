@@ -1,5 +1,5 @@
 {
-  "name": "react-redux-sr-kit",
+  "name": "react-redux-starter-kit",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -64,7 +64,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maxmarinich/React-Redux-SR-Kit.git"
+    "url": "git+https://github.com/maxmarinich/react-redux-starter-kit.git"
   },
   "keywords": [
     "react",
@@ -74,7 +74,7 @@
   "author": "Max Marinich",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/maxmarinich/React-Redux-SR-Kit/issues"
+    "url": "https://github.com/maxmarinich/react-redux-starter-kit/issues"
   },
-  "homepage": "https://github.com/maxmarinich/React-Redux-SR-Kit#readme"
+  "homepage": "https://github.com/maxmarinich/react-redux-starter-kit#readme"
 }
