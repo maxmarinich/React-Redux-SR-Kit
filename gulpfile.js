@@ -13,20 +13,26 @@ const source = require('vinyl-source-stream');
 const autoprefixer = require('gulp-autoprefixer');
 
 
+const production = process.env.NODE_ENV === 'production';
+
 const VARS = {
+  views: {
+    src: 'source/views/**/*.pug',
+    dest: './server/views'
+  },
   css: {
-    src: 'assets/styles/**/*.sass',
-    entry: 'assets/styles/style.sass',
+    src: 'source/assets/styles/**/*.sass',
+    entry: 'source/assets/styles/style.sass',
     dest: './static'
   },
   img: {
-    src: 'assets/i/**/*',
+    src: 'source/assets/i/**/*',
     dest: './static/i'
   },
   js: {
-    src: 'assets/js/**/*.js',
-    entry: 'assets/js/index.js',
-    dest: './static/',
+    src: 'source/assets/js/**/*.js',
+    entry: 'source/assets/js/index.js',
+    dest: './static',
     bundle: function(options) {
       const props = {
         entries: [VARS.js.entry],
@@ -41,7 +47,8 @@ const VARS = {
         presets: ['es2015', 'react'],
         plugins: ['transform-object-rest-spread', 'transform-runtime']
       });
-      bundler.transform({global: true}, uglifyify);
+
+      if (production) { bundler.transform({global: true}, uglifyify) }
 
       function rebundle() {
         return bundler.bundle()
@@ -60,11 +67,17 @@ const VARS = {
   }
 };
 
-gulp.task('default', ['build', 'watch']);
+gulp.task('default', ['build']);
 
-gulp.task('build', ['js', 'css', 'img']);
+gulp.task('build', ['js', 'css', 'img', 'views']);
 
 gulp.task('watch', [ 'watch:js', 'watch:css', 'watch:img' ]);
+
+gulp.task('views', function() {
+  if (production) {
+    return gulp.src(VARS.views.src).pipe(gulp.dest(VARS.views.dest))
+  }
+});
 
 gulp.task('img', function() {
   return gulp.src(VARS.img.src)
@@ -73,7 +86,7 @@ gulp.task('img', function() {
 });
 
 gulp.task('js', function() {
-  return VARS.js.bundle({ sourceMaps: process.env.NODE_ENV !== 'production' });
+  return VARS.js.bundle({ sourceMaps: !production });
 });
 
 gulp.task('css', function() {

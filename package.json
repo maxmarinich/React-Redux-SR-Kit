@@ -3,6 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "scripts": {
+    "test": "mocha --compilers js:babel-register",
+    "start": "if-env NODE_ENV=production &&  npm run start:prod || nodemon ./source/server.js --exec babel-node --presets es2015,stage-2",
+    "start:prod": "npm run build && node server/server.bundle.js",
+    "build": "babel ./source/assets -d server/assets; babel ./source/server.js > ./server/server.bundle.js",
+    "postinstall": "./node_modules/.bin/gulp"
+  },
   "dependencies": {
     "babel-core": "^6.14.0",
     "babel-eslint": "^7.0.0",
@@ -55,13 +62,6 @@
     "mocha": "^3.0.2",
     "nodemon": "^1.11.0"
   },
-  "scripts": {
-    "test": "mocha --compilers js:babel-register",
-    "start": "if-env NODE_ENV=production &&  npm run start:prod || nodemon server.js --exec babel-node --presets es2015,stage-2",
-    "start:prod": "npm run build && node dist/server.bundle.js",
-    "build": "babel ./assets -d dist/assets; babel ./server.js > ./dist/server.bundle.js",
-    "postinstall": "./node_modules/.bin/gulp"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/maxmarinich/React-Redux-SR-Kit.git"
@@ -69,8 +69,7 @@
   "keywords": [
     "react",
     "redux",
-    "server-rendering",
-    "webpack"
+    "server-rendering"
   ],
   "author": "Max Marinich",
   "license": "MIT",

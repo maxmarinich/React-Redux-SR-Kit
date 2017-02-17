@@ -9,7 +9,7 @@ html
         link(type="text/css", rel="stylesheet", href="//cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css")
         link(rel="stylesheet", type="text/css", href="/style.css")
     body
-        #root= html || 'root'
+        #root!= html || 'root'
         script.
           window.__PRELOADED_STATE__ = !{JSON.stringify(state)}
         script(src="/index.js")
